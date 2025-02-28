@@ -1,0 +1,42 @@
+# Node.js (React)
+node_modules/
+*.log
+yarn.lock
+package-lock.json
+.env
+.env.local
+dist/
+build/
+.DS_Store
+
+# Python (FastAPI)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+instance/
+*.db
+*.sqlite
+*.log
+.env
+.env.local
+
+# Virtual Environment
+venv/
+.env/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# VS Code settings
+.vscode/
+
+# IDEs and Editors
+.idea/
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+.DS_Store
