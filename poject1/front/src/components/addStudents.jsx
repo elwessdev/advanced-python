@@ -1,23 +1,32 @@
 import axios from "axios";
 import { Form, Input, Button, Card, message } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { useImperativeHandle } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
-export default function AddStudents({addRef}) {
+export default function AddStudents({addRef,setAddStudentModel}) {
     const [messageApi, contextHolder] = message.useMessage();
+    const queryClient = useQueryClient();
     const [form] = useForm();
 
     const handleSubmit = async (values) => {
-        console.log(values);
+        // console.log(values);
         try {
             const res = await axios.post("http://127.0.0.1:8000/add/", values, {
                 withCredentials: true,
             });
-            console.log(res);
-            if(res.status==200){
+            // console.log(res);
+            if(res.data[1]==201){
+                queryClient.invalidateQueries({queryKey: ['studentsAPI']});
                 messageApi.open({
                     type: 'success',
-                    content: res.data.message,
+                    content: res.data[0].message,
+                });
+                setAddStudentModel(false);
+            }
+            if (res.data[1] == 400) {
+                messageApi.open({
+                    type: 'error',
+                    content: res.data[0].message,
                 });
             }
         } catch (err) {
@@ -25,11 +34,11 @@ export default function AddStudents({addRef}) {
         }
     };
 
-    useImperativeHandle(addRef,handleSubmit,[addRef]);
     return (
         <>
         {contextHolder}
         <Form
+            ref={addRef}
             form={form}
             layout="vertical"
             onFinish={handleSubmit}
