@@ -15,16 +15,15 @@ app.add_middleware(
 
 students = []
 
-# Get Students Route
+# Get All Students Route
 @app.get("/")
 def get_students():
-    # print(students)
     return students
 
-# Post Student Route
+# Add Student Route
 @app.post("/add/")
 def add_student(student: dict):
-    print(student["cin"])
+    # print(student["cin"])
     if student not in students and student["cin"] not in [s["cin"] for s in students]:
         students.append(student)
         return {"message": "Student Added Successfully"}, status.HTTP_201_CREATED
@@ -33,10 +32,28 @@ def add_student(student: dict):
     
 # Delete Student Route
 @app.delete("/delete/{cin}")
-def delete_student(cin: int):
-    # for student in students:
-    #     if student["cin"] == cin:
-    #         students.remove(student)
-    #         return {"message": "Student Deleted Successfully"}, status.HTTP_200_OK
+def delete_student(cin: str):
+    for student in students:
+        if student["cin"] == cin:
+            students.remove(student)
+            return {"message": "Student Deleted Successfully"}, status.HTTP_200_OK
+    return {"message": "Student Not Found"}, status.HTTP_404_NOT_FOUND
+
+# Get Student By CIN Route
+@app.get("/info/{cin}")
+def get_student_info(cin:str):
     print(cin)
+    for student in students:
+        if student["cin"]==cin:
+            return student, status.HTTP_200_OK
+    return {"message": "Student Not Found"}, status.HTTP_404_NOT_FOUND
+
+# Edit Student Route
+@app.put("/edit/{cin}")
+def edit_student(cin:str,data:dict):
+    print(cin)
+    for student in students:
+        if student["cin"]==cin:
+            student.update(data)
+            return {"message": "Student Updated Successfully"}, status.HTTP_200_OK
     return {"message": "Student Not Found"}, status.HTTP_404_NOT_FOUND

@@ -2,34 +2,38 @@ import { Button, message, Modal, Table } from "antd";
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from "axios";
 import { useRef, useState } from "react";
-import AddStudents from "./components/addStudents";
+import StudentForm from "./components/studentForm";
 
 function App() {
     const [messageApi, contextHolder] = message.useMessage();
-    const [addSudentModel, setAddStudentModel] = useState(false);
     const queryClient = useQueryClient();
-    const addStudentRef = useRef(null);
+    
+    // Get Students
     const {data:students, isLoading, error} = useQuery({
         queryFn: async () => {
-            const res = await axios.get("http://127.0.0.1:8000/",{withCredentials: true});
+            const res = await axios.get("http://127.0.0.1:8000/");
             return res.data;
         },
         queryKey: ['studentsAPI'],
     });
 
+    // Add Student
+    const [addSudentModel, setAddStudentModel] = useState(false);
+    const addStudentRef = useRef(null);
     const handleAddStudent = async () =>  {
         await addStudentRef.current.submit();
     }
 
-    const setEditStudentModel = (cin) => {
-        console.log(cin);
-    }
-
+    // Delete Student
     const handleDeleteStudent = async (cin) => {
         try {
-            const res = await axios.delete(`http://127.0.0.1:8000/delete/${cin}`,{withCredentials: true});
+            const res = await axios.delete(`http://127.0.0.1:8000/delete/${cin}`);
             if(res.data[1]===200){
-                console.log(res);
+                // console.log(res);
+                messageApi.open({
+                    type: 'success',
+                    content: res.data[0].message,
+                });
                 queryClient.invalidateQueries({queryKey: ['studentsAPI']});
             }
             if(res.data[1]===404){
@@ -44,6 +48,36 @@ function App() {
                 content: err.message,
             });
         }
+    }
+
+    // Edit Student
+    const editStudentRef = useRef(null);
+    const [editStudentModel, setEditStudentModel] = useState(false);
+    const [editStudentData, setEditStudentData] = useState(null);
+    const handleOpenEditStudent = async(cin) => {
+        try {
+            const res = await axios.get(`http://127.0.0.1:8000/info/${cin}`);
+            if(res.data[1]===404){
+                messageApi.open({
+                    type: 'error',
+                    content: res.data[0].message,
+                });
+                return;
+            }
+            if(res.data[1]==200){
+                setEditStudentData(res.data[0]);
+                setEditStudentModel(true);
+            }
+        } catch (err){
+            messageApi.open({
+                type: 'error',
+                content: "Sudent Info not found",
+            });
+        }
+        setEditStudentModel(true);
+    }
+    const handleEditStudent = () => {
+        editStudentRef.current.submit();
     }
 
     return (
@@ -68,8 +102,8 @@ function App() {
                             phone: student.phone,
                             class: student.class,
                             options: <>
-                            <Button type="primary" style={{marginRight:"7px"}} onClick={()=>setEditStudentModel(student?.cin)}>Edit</Button>
-                            <Button type="primary" onClick={()=>handleDeleteStudent(student?.cin)} danger>Delete</Button>
+                                <Button type="primary" style={{marginRight:"7px"}} onClick={()=>handleOpenEditStudent(student?.cin)}>Edit</Button>
+                                <Button type="primary" onClick={()=>handleDeleteStudent(student?.cin)} danger>Delete</Button>
                             </>
                         })) 
                         : []
@@ -115,15 +149,32 @@ function App() {
             </div>
             {/* Add Student */}
             <Modal
-                title="Basic Modal"
+                title="Add Student"
                 open={addSudentModel} 
                 onOk={handleAddStudent}
                 onCancel={()=>setAddStudentModel(false)} 
                 okText="Add Student"
             >
-                <AddStudents 
-                    addRef={addStudentRef} 
-                    setAddStudentModel={setAddStudentModel}
+                <StudentForm 
+                    type="add"
+                    FormRef={addStudentRef} 
+                    modelStatus={setAddStudentModel}
+                    data={[]}
+                />
+            </Modal>
+            {/* Edit Student */}
+            <Modal
+                title="Edit Student"
+                open={editStudentModel} 
+                onOk={handleEditStudent}
+                onCancel={()=>setEditStudentModel(false)} 
+                okText="Save"
+            >
+                <StudentForm
+                    type="edit"
+                    FormRef={editStudentRef}
+                    modelStatus={setEditStudentModel}
+                    data={editStudentData}
                 />
             </Modal>
         </div>
