@@ -100,7 +100,7 @@ function App() {
                             age: student.age,
                             email: student.email,
                             phone: student.phone,
-                            class: student.class,
+                            class: student.class_s,
                             options: <>
                                 <Button type="primary" style={{marginRight:"7px"}} onClick={()=>handleOpenEditStudent(student?.cin)}>Edit</Button>
                                 <Button type="primary" onClick={()=>handleDeleteStudent(student?.cin)} danger>Delete</Button>

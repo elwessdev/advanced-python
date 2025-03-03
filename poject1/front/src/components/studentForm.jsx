@@ -129,7 +129,7 @@ export const StudentForm = ({type,FormRef,modelStatus,data})=>{
             </Form.Item>
             <Form.Item
                 label="Class"
-                name="class"
+                name="class_s"
                 rules={[{ required: true, message: "Please enter your class" }]}
             >
                 <Input name="class" />
