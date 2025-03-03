@@ -1,9 +1,13 @@
-from typing import Union
+# from typing import Union, Optional
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+from pydantic import BaseModel
+# from bson import ObjectId
+from database import db
 
+
+app = FastAPI()
 # Cors Middleware
 app.add_middleware(
     CORSMiddleware,
@@ -13,47 +17,62 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-students = []
+# DB Config
+studentCollection = db["students"]
+class Student(BaseModel):
+    cin: str
+    name: str
+    age: str
+    email: str
+    phone: str
+    class_s: str
+
+# students = []
 
 # Get All Students Route
 @app.get("/")
-def get_students():
+async def get_students():
+    students = await studentCollection.find().to_list(length=None)
+    for student in students:
+        student["_id"] = str(student["_id"])
     return students
+
 
 # Add Student Route
 @app.post("/add/")
-def add_student(student: dict):
-    # print(student["cin"])
-    if student not in students and student["cin"] not in [s["cin"] for s in students]:
-        students.append(student)
-        return {"message": "Student Added Successfully"}, status.HTTP_201_CREATED
-    else:
+async def add_student(student: Student):
+    print(student.dict())
+    check = await studentCollection.find_one({"cin": student.cin})
+    if check:
         return {"message": "Student Already Exists"}, status.HTTP_400_BAD_REQUEST
+    else:
+        await studentCollection.insert_one(student.dict())
+        return {"message": "Student Added Successfully"}, status.HTTP_201_CREATED
     
+
 # Delete Student Route
 @app.delete("/delete/{cin}")
-def delete_student(cin: str):
-    for student in students:
-        if student["cin"] == cin:
-            students.remove(student)
-            return {"message": "Student Deleted Successfully"}, status.HTTP_200_OK
+async def delete_student(cin: str):
+    delRe = await studentCollection.delete_one({"cin": cin})
+    if delRe.deleted_count:
+        return {"message": "Student Deleted Successfully"}, status.HTTP_200_OK
     return {"message": "Student Not Found"}, status.HTTP_404_NOT_FOUND
+
 
 # Get Student By CIN Route
 @app.get("/info/{cin}")
-def get_student_info(cin:str):
-    print(cin)
-    for student in students:
-        if student["cin"]==cin:
-            return student, status.HTTP_200_OK
+async def get_student_info(cin:str):
+    infos = await studentCollection.find_one({"cin": cin})
+    if infos:
+        infos["_id"] = str(infos["_id"])
+        return infos, status.HTTP_200_OK
     return {"message": "Student Not Found"}, status.HTTP_404_NOT_FOUND
+
 
 # Edit Student Route
 @app.put("/edit/{cin}")
-def edit_student(cin:str,data:dict):
-    print(cin)
-    for student in students:
-        if student["cin"]==cin:
-            student.update(data)
-            return {"message": "Student Updated Successfully"}, status.HTTP_200_OK
+async def edit_student(cin:str,data: dict):
+    student = await studentCollection.find_one_and_update({"cin": cin}, {"$set": data})
+    if student:
+        return {"message": "Student Updated Successfully"}, status.HTTP_200_OK
     return {"message": "Student Not Found"}, status.HTTP_404_NOT_FOUND

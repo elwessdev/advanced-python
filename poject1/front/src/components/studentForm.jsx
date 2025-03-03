@@ -17,7 +17,7 @@ export const StudentForm = ({type,FormRef,modelStatus,data})=>{
             age: data&&type=="edit" ? data?.age : null,
             email: data&&type=="edit" ? data?.email : null,
             phone: data&&type=="edit" ? data?.phone : null,
-            class: data&&type=="edit" ? data?.class : null,
+            class_s: data&&type=="edit" ? data?.class_s : null,
         });
     }, [data,type,form]);
 
@@ -129,7 +129,7 @@ export const StudentForm = ({type,FormRef,modelStatus,data})=>{
             </Form.Item>
             <Form.Item
                 label="Class"
-                name="class"
+                name="class_s"
                 rules={[{ required: true, message: "Please enter your class" }]}
             >
                 <Input name="class" />
