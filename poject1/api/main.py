@@ -35,10 +35,6 @@ async def get_students():
     students = await studentCollection.find().to_list(length=None)
     for student in students:
         student["_id"] = str(student["_id"])
-async def get_students():
-    students = await studentCollection.find().to_list(length=None)
-    for student in students:
-        student["_id"] = str(student["_id"])
     return students
 
 
@@ -52,24 +48,10 @@ async def add_student(student: Student):
         return {"message": "Student Already Exists"}, status.HTTP_400_BAD_REQUEST
     else:
         await studentCollection.insert_one(student.dict())
-async def add_student(student: Student):
-    print(student.dict())
-    check = await studentCollection.find_one({"cin": student.cin})
-    if check:
-        return {"message": "Student Already Exists"}, status.HTTP_400_BAD_REQUEST
-    else:
-        await studentCollection.insert_one(student.dict())
         return {"message": "Student Added Successfully"}, status.HTTP_201_CREATED
-    
-
-    
 
 # Delete Student Route
 @app.delete("/delete/{cin}")
-async def delete_student(cin: str):
-    delRe = await studentCollection.delete_one({"cin": cin})
-    if delRe.deleted_count:
-        return {"message": "Student Deleted Successfully"}, status.HTTP_200_OK
 async def delete_student(cin: str):
     delRe = await studentCollection.delete_one({"cin": cin})
     if delRe.deleted_count:
@@ -80,11 +62,6 @@ async def delete_student(cin: str):
 
 # Get Student By CIN Route
 @app.get("/info/{cin}")
-async def get_student_info(cin:str):
-    infos = await studentCollection.find_one({"cin": cin})
-    if infos:
-        infos["_id"] = str(infos["_id"])
-        return infos, status.HTTP_200_OK
 async def get_student_info(cin:str):
     infos = await studentCollection.find_one({"cin": cin})
     if infos:
