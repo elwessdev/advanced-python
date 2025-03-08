@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Form, Input, Button, Card, message } from "antd";
+import { Form, Input, Button, Card, message, DatePicker } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useQueryClient } from "@tanstack/react-query";
 import { memo, useEffect } from "react";
@@ -21,28 +21,32 @@ export const StudentForm = ({type,FormRef,modelStatus,data})=>{
         });
     }, [data,type,form]);
 
+    const birthChange: DatePickerProps['onChange'] = (date, dateString) => {
+        console.log(date, dateString);
+    };
+
     const handleAddStudent = async (values) => {
-        // console.log(values);
-        try {
-            const res = await axios.post("http://127.0.0.1:8000/add/", values);
-            // console.log(res);
-            if(res.data[1]==201){
-                queryClient.invalidateQueries({queryKey: ['studentsAPI']});
-                messageApi.open({
-                    type: 'success',
-                    content: res.data[0].message,
-                });
-                modelStatus(false);
-            }
-            if (res.data[1] == 400) {
-                messageApi.open({
-                    type: 'error',
-                    content: res.data[0].message,
-                });
-            }
-        } catch (err) {
-            console.log(err);
-        }
+        console.log(values.age);
+        // try {
+        //     const res = await axios.post("http://127.0.0.1:8000/add/", values);
+        //     // console.log(res);
+        //     if(res.data[1]==201){
+        //         queryClient.invalidateQueries({queryKey: ['studentsAPI']});
+        //         messageApi.open({
+        //             type: 'success',
+        //             content: res.data[0].message,
+        //         });
+        //         modelStatus(false);
+        //     }
+        //     if (res.data[1] == 400) {
+        //         messageApi.open({
+        //             type: 'error',
+        //             content: res.data[0].message,
+        //         });
+        //     }
+        // } catch (err) {
+        //     console.log(err);
+        // }
     };
 
     const handleEditStudent = async (values) => {
@@ -106,9 +110,9 @@ export const StudentForm = ({type,FormRef,modelStatus,data})=>{
             <Form.Item
                 label="Age"
                 name="age"
-                rules={[{ required: true, message: "Please enter your age" }]}
+                rules={[{ required: true, message: "Please enter your Birth Date" }]}
             >
-                <Input type="number" name="age" />
+                <DatePicker onChange={birthChange} />
             </Form.Item>
             <Form.Item
                 label="Email"
