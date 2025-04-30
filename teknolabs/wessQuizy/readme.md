@@ -24,9 +24,6 @@
 
 ## 🖥️ Screenshots
 
-> 📷 _Add your screenshots below this section_  
-> _Example:_
-
 ![Quiz Page](screenshots/img1.png)
 ![Quiz Page](screenshots/img2.png)
 ---
@@ -37,4 +34,4 @@
 
 ```bash
 git clone https://github.com/yourusername/wessquizy.git
-cd wessquizy
+cd wessQuizy
