@@ -26,12 +26,3 @@
 
 ![Quiz Page](screenshots/img1.png)
 ![Quiz Page](screenshots/img2.png)
----
-
-## ⚙️ Setup Instructions
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/wessquizy.git
-cd wessQuizy
