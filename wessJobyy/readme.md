@@ -1,7 +1,7 @@
-# 🧠 wessJobby
+# 🧠 wessJobyy
 
-Welcome to **wessJobby**, the fun and powerful web app that helps you find your next job — before AI takes them all!  
-Built using **FastAPI**, **React**, **BeautifulSoup**, wessJobby scrapes job listings from top platforms like **Wuzzuf** by filtering and serving them through a sleek, easy-to-use interface.
+Welcome to **wessJobyy**, the fun and powerful web app that helps you find your next job — before AI takes them all!  
+Built using **FastAPI**, **React**, **BeautifulSoup**, wessJobyy scrapes job listings from top platforms like **Wuzzuf** by filtering and serving them through a sleek, easy-to-use interface.
 
 ---
 
