@@ -53,4 +53,4 @@ pip install -r requirements.txt
 uvicorn main_fastapi:app --reload
 
 # 4. Run Streamlit frontend
-streamlit run app.py
+streamlit run main_streamlit.py
